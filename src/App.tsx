@@ -22,7 +22,7 @@ export const App: FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isAddingTodo, setIsAddingTodo] = useState(false);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
-  const [todoToDelete, setTodoToDelete] = useState<number[]>([]);
+  const [loadingTodoIds, setLoadingTodoIds] = useState<number[]>([]);
 
   const [errorMessage, setErrorMessage] = useState(Errors.DEFAULT);
   const [filterStatus, setFilterStatus] = useState(FilterStatus.ALL);
@@ -71,7 +71,10 @@ export const App: FC = () => {
   };
 
   const handleDeleteTodo = (todoId: number) => {
-    setTodoToDelete(currentTodosToDelete => [...currentTodosToDelete, todoId]);
+    setLoadingTodoIds(currentLoadingTodoIds => [
+      ...currentLoadingTodoIds,
+      todoId,
+    ]);
     deleteTodo(todoId)
       .then(() => {
         setTodos(currentTodos =>
@@ -80,7 +83,7 @@ export const App: FC = () => {
       })
       .catch(() => setErrorMessage(Errors.DELETE_TODO))
       .finally(() => {
-        setTodoToDelete([]);
+        setLoadingTodoIds([]);
       });
   };
 
@@ -106,7 +109,7 @@ export const App: FC = () => {
             <TodoList
               todos={filteredTodos}
               handleDeleteTodo={handleDeleteTodo}
-              todoToDelete={todoToDelete}
+              todoToDelete={loadingTodoIds}
             />
 
             {tempTodo && (
